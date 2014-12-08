@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<clsMXWidgetSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <WidgetName>TooltipLink</WidgetName>
+  <SourcePath>C:\Projects\Tickets - Projects\100705 - Tooltip trigger\TooltipLink\src\</SourcePath>
+  <DestinationPath>C:\Projects\Tickets - Projects\100705 - Tooltip trigger\TooltipLink\test\</DestinationPath>
+  <Monitor>false</Monitor>
+</clsMXWidgetSettings>

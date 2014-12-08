@@ -1,0 +1,28 @@
+.mx-tooltip .dijitTooltipContainer:after,
+.mx-tooltip .dijitTooltipContainer:before {
+    right: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.mx-tooltip .dijitTooltipContainer:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-right-color: #26323D;
+    border-width: 7px;
+    margin-top: -7px;
+}
+.mx-tooltip .dijitTooltipContainer:before {
+    border-color: rgba(38, 50, 61, 0);
+    border-right-color: #26323D;
+    border-width: 8px;
+    margin-top: -8px;
+}
+
+.mx-tooltip .dijitTooltipConnector {
+    display: none;
+}

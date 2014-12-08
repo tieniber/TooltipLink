@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="TooltipLink.widget.TooltipLink" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+  <name>TooltipLink</name>
+  <description>Tooltip link</description>
+  <icon>
+	iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJ
+	bWFnZVJlYWR5ccllPAAAAdhJREFUeNqUUz1vE0EQfbN7PjvGxBIWpEmVghaJAqF0fFS0FAgJGjqa
+	CLrUqdKkoE2RX4DokSLoEKKDf4BEESGSYNlO8J1vJ29v1s5BhUd69uzM7Jt5c3eyNsC7O5vuPsQD
+	QQF0AJcBQl8catNACFHyMLWYU3z5FD7I4wfQt4c9RgaWwDWiT5wnRJIVI8YJMSSK+v/Jo3NkoxN6
+	X9HX631I3mauYuc/wPgYOP1u0ww2yMGJKk7RvoEwGcONfrMkDLMwI9lxwQl/QTotTkj2NgunE5Jw
+	ZE90j0h8SlBKngOjos5FRVk99ayETH4CUSJrUCU1K5kpKIcmPTYrOMlZ2gsiQdxbqcau6XIkEjHE
+	2IQ/qml5qT4uXONR512DoQx2doKFebELRaqp1Bqp8WFBognRGvdrf14T/paZLQjmiMXTYAW5t+A4
+	mAT5pzYSZJ7hnkC6zLbSoqo0W6fRLUpqSR13MUdJ3qtkLS+r6LMTSeDTi+YT5vNf9ZdSotu2nXkf
+	VqXXwd76mtwj85WtZ+7myx2P9/sBr3Zrkd8aD/WSxJ4gfhzpx2bq1pttrxpyfXg3fgg4wH+Ya/jd
+	M77Br5/OcPhZ93l+gSVtM+32YJlLvuHfTgqfL0NwIcAAg6i961ryXmAAAAAASUVORK5CYII=
+  </icon>
+  <properties>
+	<property key="tooltipform" type="form">
+      <caption>Tooltip form</caption>
+	  <category>Appearance</category>
+      <description>Tooltip form</description>
+    </property>
+	<property key="tooltippos" type="enumeration" defaultValue="below">
+      <caption>Tooltip position</caption>
+	  <category>Appearance</category>
+      <description>Tooltip position</description>
+      <enumerationValues>
+        <enumerationValue key="above">Above</enumerationValue>
+        <enumerationValue key="after">After</enumerationValue>
+		<enumerationValue key="below">Below</enumerationValue>
+        <enumerationValue key="before">Before</enumerationValue>
+	</enumerationValues>
+    </property>
+	<property key="linktext" type="string">
+      <caption>Link text</caption>
+      <category>Appearance</category>
+      <description>Link text</description>
+    </property>
+ 	<property key="cssclass" type="string" required="false">
+      <caption>Tooltip css class</caption>
+      <category>Appearance</category>
+      <description>Tooltip css class</description>
+	</property>
+  </properties>
+</widget>
