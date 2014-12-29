@@ -73,6 +73,14 @@
                     callback();
                 }
             },
+            
+            uninitialize : function() {
+                logger.debug(this.id + '.uninitialize');
+
+                if (typeof this._tooltipNode !== 'undefined' && this._tooltipNode) {
+                    mxui.widget.destroyChildren(this._tooltipNode);
+                }
+            },
 
             _onShow : function(e) {
                 logger.debug(this.id + ".onShow");
@@ -174,14 +182,6 @@
                 if(this._hideTimer !== null) {
                     clearTimeout(this._hideTimer);
                     this._hideTimer = null;
-                }
-            },
-
-            uninitialize : function() {
-                logger.debug(this.id + '.uninitialize');
-
-                if (typeof this._tooltipNode !== 'undefined' && this._tooltipNode) {
-                    mxui.widget.destroyChildren(this._tooltipNode);
                 }
             }
             
