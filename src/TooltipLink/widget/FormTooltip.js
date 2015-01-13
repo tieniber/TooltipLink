@@ -43,7 +43,7 @@
             targetnode	         : '',
             tooltipform	         : '',
             showdelay	         : 0,
-            hidedeley            : 0,
+            hidedelay            : 0,
             
             // Internal variables used.
             _hideTimer	         : null,
