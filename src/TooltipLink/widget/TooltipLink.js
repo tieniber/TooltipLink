@@ -87,7 +87,7 @@
                     targetnode	: domQuery('#' + this.id + '_lnk')[0],
                     tooltipform	: this.tooltipform,
                     showdelay	: 0,
-                    hidedeley   : 0
+                    hidedelay   : 0
                 });
             },
 
