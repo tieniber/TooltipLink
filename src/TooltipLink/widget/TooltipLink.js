@@ -1,4 +1,4 @@
-/*jslint white: true nomen: true plusplus: true */
+/*jslint white: true, nomen: true, plusplus: true */
 /*global logger, mx, mxui, mendix, dojo, require, console, define, module, TooltipLink */
 /**
 
@@ -6,29 +6,21 @@
 	========================
 
 	@file      : TooltipLink.js
-	@version   : 1.0
+	@version   : 1.1
 	@author    : Gerhard Richard Edens
 	@date      : Thursday, December 4, 2014
 	@copyright : Mendix Technology BV
 	@license   : Apache License, Version 2.0, January 2004
 
-	Documentation
-    ========================
-	Describe your widget here.
-
 */
 
-(function() {
-    'use strict';
-    
-    // test
-    require([
+define([
 
-        'mxui/widget/_WidgetBase', 'dijit/_Widget', 'dijit/_TemplatedMixin',
-        'mxui/dom', 'dojo/dom', 'dojo/query', 'dojo/dom-prop', 'dojo/dom-geometry', 'dojo/dom-class', 'dojo/dom-style', 'dojo/on', 'dojo/_base/lang', 'dojo/_base/declare', 'dojo/text',
-        'TooltipLink/widget/FormTooltip'
+		'dojo/_base/declare','mxui/widget/_WidgetBase', 'dijit/_Widget', 'dijit/_TemplatedMixin',
+        'dojo/query', 'dojo/_base/lang',
+        'TooltipLink/widget/FormTooltip', 'dojo/text!TooltipLink/widget/templates/TooltipLink.html'
 
-    ], function (_WidgetBase, _Widget, _Templated, domMx, dom, domQuery, domProp, domGeom, domClass, domStyle, on, lang, declare, text) {
+    ], function (declare, _WidgetBase, _Widget, _Templated, domQuery, lang, formTooltip, widgetTemplate) {
 
         // Declare widget.
         return declare('TooltipLink.widget.TooltipLink', [ _WidgetBase, _Widget, _Templated ], {
@@ -40,7 +32,7 @@
             baseClass		: "formtooltipTooltipLink",
             
             // Template path
-            templatePath: require.toUrl('TooltipLink/widget/templates/TooltipLink.html'),
+            templateString: widgetTemplate,
             
             // Extra variables
             _dataContent    : {},
@@ -161,4 +153,6 @@
         });
     });
     
-}());
+require(["TooltipLink/widget/TooltipLink"], function () {
+	"use strict";
+});

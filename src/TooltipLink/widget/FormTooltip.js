@@ -1,5 +1,5 @@
-/*jslint white: true nomen: true plusplus: true */
-/*global logger, mx, mxui, mendix, dojo, require, console, define, module, formtooltip, dijit */
+/*jslint white: true, nomen: true, plusplus: true */
+/*global logger, mx, mxui, mendix, dojo, require, console, define, module, formtooltip, dijit, setTimeout, clearTimeout */
 /**
 
 	FormTooltip
@@ -18,176 +18,172 @@
 
 */
 
-(function() {
-    'use strict';
+define([
+	"dojo/_base/declare", "mxui/widget/_WidgetBase", "dijit/_TemplatedMixin", "TooltipLink/widget/MasterTooltip",
+	"mxui/dom", "dojo/dom", "dojo/query", "dojo/dom-prop", "dojo/dom-geometry", "dojo/dom-class", "dojo/dom-style", "dojo/on", "dojo/_base/lang", "dojo/text", "dojo/dom-attr", "dijit/registry",
+	"dojo/text!TooltipLink/widget/templates/Tooltip.html"
+], function (declare, _WidgetBase, _TemplatedMixin, MasterTooltip, domMx, dom, domQuery, domProp, domGeom, domClass, domStyle, on, lang, text, domAttr, registry, widgetTemplate) {
+	"use strict";
 
-    // test
-    require([
+	// Declare widget.
+	return declare("TooltipLink.widget.FormTooltip", [ _WidgetBase, _TemplatedMixin, MasterTooltip ], {
 
-        'mxui/widget/_WidgetBase', 'dijit/_Widget', 'dijit/_TemplatedMixin', 'mxui/widget/_MasterTooltip',
-        'mxui/dom', 'dojo/dom', 'dojo/query', 'dojo/dom-prop', 'dojo/dom-geometry', 'dojo/dom-class', 'dojo/dom-style', 'dojo/on', 'dojo/_base/lang', 'dojo/_base/declare', 'dojo/text', 'dojo/dom-attr', 'dijit/registry'
+		baseClass            : "formtooltipFormTooltip",
 
-    ], function (_WidgetBase, _Widget, _Templated, MasterTooltip, domMx, dom, domQuery, domProp, domGeom, domClass, domStyle, on, lang, declare, text, domAttr, registry) {
-   
-        // Declare widget.
-        return declare('TooltipLink.widget.FormTooltip', [ _WidgetBase, _Widget, _Templated, MasterTooltip ], {
+		// Template path
+		templateString		 : widgetTemplate,
 
-            baseClass            : 'formtooltipFormTooltip',
+		// External variables with default settings
+		cssclass	         : "",
+		position	         : "",
+		targetnode	         : "",
+		tooltipform	         : "",
+		showdelay	         : 0,
+		hidedelay            : 0,
 
-            // Template path
-            templatePath: require.toUrl('TooltipLink/widget/templates/Tooltip.html'),
+		// Internal variables used.
+		_hideTimer	         : null,
+		_showTimer	         : null,
+		_tooltipNode         : null,
+		_previousContext	 : null,
+		_currentContext	     : null,
+		_topWidgets	         : null,
 
-            // External variables with default settings
-            cssclass	         : '',
-            position	         : '',
-            targetnode	         : '',
-            tooltipform	         : '',
-            showdelay	         : 0,
-            hidedelay            : 0,
-            
-            // Internal variables used.
-            _hideTimer	         : null,
-            _showTimer	         : null,
-            _tooltipNode         : null,
-            _previousContext	 : null,
-            _currentContext	     : null,
-            _topWidgets	         : null,
-            
-            _dataContainer       : {},
+		_dataContainer       : {},
 
-            postCreate : function() {
-                logger.debug(this.id + ".postCreate");
+		postCreate : function() {
+			logger.debug(this.id + ".postCreate");
 
-                this.connect(this.targetnode, 'onmouseover', '_onShow');
-                this.connect(this.targetnode, 'onmouseout', '_onHide');
-                
-                this.connect(mxui.widget, 'hideTooltip', this, '_hideTooltip');
-            },
+			this.connect(this.targetnode, "onmouseover", "_onShow");
+			this.connect(this.targetnode, "onmouseout", "_onHide");
 
-            applyContext : function(context, callback) {
-                logger.debug(this.id + ".applyContext");
+			this.connect(mxui.widget, "hideTooltip", this, "_hideTooltip");
+		},
 
-                this._currentContext = context;
+		applyContext : function(context, callback) {
+			logger.debug(this.id + ".applyContext");
 
-                if (typeof callback !== 'undefined') {
-                    callback();
-                }
-            },
-            
-            uninitialize : function() {
-                logger.debug(this.id + '.uninitialize');
+			this._currentContext = context;
 
-                if (typeof this._tooltipNode !== 'undefined' && this._tooltipNode) {
-                    mxui.widget.destroyChildren(this._tooltipNode);
-                }
-            },
+			if (typeof callback !== "undefined") {
+				callback();
+			}
+		},
 
-            _onShow : function(e) {
-                logger.debug(this.id + ".onShow");
+		uninitialize : function() {
+			logger.debug(this.id + ".uninitialize");
 
-                this._clearHideTimer();
+			if (typeof this._tooltipNode !== "undefined" && this._tooltipNode) {
+				mxui.widget.destroyChildren(this._tooltipNode);
+			}
+		},
 
-                if(!this._currentState) {
-                    this._showTimer = setTimeout( lang.hitch(this, this._fetchForm) , this.showdelay);
-                }
-            },
+		_onShow : function(e) {
+			logger.debug(this.id + ".onShow");
 
-            _onHide : function(e) {
-                logger.debug(this.id + ".onHide");
+			this._clearHideTimer();
 
-                this._clearShowTimer();
+			if(!this._currentState) {
+				this._showTimer = setTimeout(lang.hitch(this, this._fetchForm) , this.showdelay);
+			}
+		},
 
-                if(this._currentState) {
-                    this._hideTimer = setTimeout( lang.hitch(this, this._hideTooltip) , this.hidedelay);
-                }
-            },
+		_onHide : function(e) {
+			logger.debug(this.id + ".onHide");
 
-            _fetchForm : function() {
-                var node = null,
-                    ioBind = null;
-                
-                logger.debug(this.id + '.fetchForm');
+			this._clearShowTimer();
 
-                if(this._topWidgets) {
-                    this._showTooltip();
-                } else {
-                    node = mxui.dom.create('div');
-                    ioBind = mx.ui.openForm(this.tooltipform, {
-                        location: 'content',
-                        domNode: node,
-                        callback: lang.hitch(this, function(form) {
-                            var i = null,
-                                widget;
-                            
-                            this._tooltipNode = node.firstChild;
-                            this._topWidgets = registry.findWidgets(this._tooltipNode)[0];
+			if(this._currentState) {
+				this._hideTimer = setTimeout(lang.hitch(this, this._hideTooltip) , this.hidedelay);
+			}
+		},
 
-                            this._topWidgets.set('disabled',true);
+		_fetchForm : function() {
+			var node = null,
+				ioBind = null;
 
-                            this.connect(this._tooltipNode, 'onmouseover', lang.hitch(this, this._onShow));
-                            this.connect(this._tooltipNode, 'onmouseout', lang.hitch(this, this._onHide));
+			logger.debug(this.id + ".fetchForm");
 
-                            this._showTooltip();
-                        } )
-                    });
-                }
-            },
+			if(this._topWidgets) {
+				this._showTooltip();
+			} else {
+				node = mxui.dom.create("div");
+				ioBind = mx.ui.openForm(this.tooltipform, {
+					location: "content",
+					domNode: node,
+					callback: lang.hitch(this, function(form) {
+						var i = null,
+							widget;
 
-            _showTooltip : function() {
-                logger.debug(this.id + '.showTooltip');
-                this._currentState = true;
-                if(this._currentContext !== this._previousContext) {
-                    this._onShowTooltip(null, this.targetnode, this.position);
-                    if(typeof this._topWidgets.applyContext !== 'undefined') {
-                        this._topWidgets.applyContext(this._currentContext, lang.hitch(this, function() {
-                            if(this._currentState) {
-                                this._previousContext = this._currentContext;
-                                this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
-                            }
-                        }));
-                    }
-                    this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
-                } else {
-                    this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
-                }
-            },
-            _onShowTooltip : function(content, aroundNode, position, cssclass) {
-                if(!this._masterTT){ this._masterTT = new MasterTooltip(); }
-                this._masterTT.show(content, aroundNode, position, cssclass);
-            },
+						this._tooltipNode = node.firstChild;
+						this._topWidgets = registry.findWidgets(this._tooltipNode)[0];
 
-            _hideTooltip : function() {
-                logger.debug(this.id + '.hideTooltip');
-                this._currentState = false;
-                this._onHideTooltip(this.targetnode);
-            },
-            _onHideTooltip : function(aroundNode) {
-                if(!this._masterTT){ this._masterTT = new MasterTooltip(); }
-                if(aroundNode === null){ aroundNode = this._masterTT.currentNode; }
-                this._masterTT.hide(aroundNode);
-            },
+						this._topWidgets.set("disabled",true);
 
-            _clearShowTimer : function() {
-                logger.debug(this.id + '.clearShowTimer');
+						this.connect(this._tooltipNode, "onmouseover", lang.hitch(this, this._onShow));
+						this.connect(this._tooltipNode, "onmouseout", lang.hitch(this, this._onHide));
 
-                if(this._showTimer !== null) {
-                    clearTimeout(this._showTimer);
-                    this._showTimer = null;
-                }
-            },
+						this._showTooltip();
+					} )
+				});
+			}
+		},
 
-            _clearHideTimer : function() {
-                logger.debug(this.id + '.clearHideTimer');
+		_showTooltip : function() {
+			logger.debug(this.id + ".showTooltip");
+			this._currentState = true;
+			if(this._currentContext !== this._previousContext) {
+				this._onShowTooltip(null, this.targetnode, this.position);
+				if(typeof this._topWidgets.applyContext !== "undefined") {
+					this._topWidgets.applyContext(this._currentContext, lang.hitch(this, function() {
+						if(this._currentState) {
+							this._previousContext = this._currentContext;
+							this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
+						}
+					}));
+				}
+				this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
+			} else {
+				this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
+			}
+		},
+		_onShowTooltip : function(content, aroundNode, position, cssclass) {
+			if(!this._masterTT){ this._masterTT = new MasterTooltip(); }
+			this._masterTT.show(content, aroundNode, position, cssclass);
+		},
 
-                if(this._hideTimer !== null) {
-                    clearTimeout(this._hideTimer);
-                    this._hideTimer = null;
-                }
-            }
-            
-        });
-        
-    });
-    
-    
-}());
+		_hideTooltip : function() {
+			logger.debug(this.id + ".hideTooltip");
+			this._currentState = false;
+			this._onHideTooltip(this.targetnode);
+		},
+		_onHideTooltip : function(aroundNode) {
+			if(!this._masterTT){ this._masterTT = new MasterTooltip(); }
+			if(aroundNode === null){ aroundNode = this._masterTT.currentNode; }
+			this._masterTT.hide(aroundNode);
+		},
+
+		_clearShowTimer : function() {
+			logger.debug(this.id + ".clearShowTimer");
+
+			if(this._showTimer !== null) {
+				clearTimeout(this._showTimer);
+				this._showTimer = null;
+			}
+		},
+
+		_clearHideTimer : function() {
+			logger.debug(this.id + ".clearHideTimer");
+
+			if(this._hideTimer !== null) {
+				clearTimeout(this._hideTimer);
+				this._hideTimer = null;
+			}
+		}
+
+	});
+
+});
+require(["TooltipLink/widget/FormTooltip"], function () {
+	"use strict";
+});
