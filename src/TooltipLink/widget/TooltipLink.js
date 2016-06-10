@@ -21,8 +21,9 @@ define([
         'TooltipLink/widget/FormTooltip', 'dojo/text!TooltipLink/widget/templates/TooltipLink.html'
 
     ], function (declare, _WidgetBase, _Widget, _Templated, domQuery, lang, formTooltip, widgetTemplate) {
-
+		"use strict";
         // Declare widget.
+	
         return declare('TooltipLink.widget.TooltipLink', [ _WidgetBase, _Widget, _Templated ], {
 
             /**

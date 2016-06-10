@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget id="TooltipLink.widget.TooltipLink" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
-  <name>TooltipLink</name>
-  <description>Tooltip link</description>
+<widget id="TooltipLink.widget.FormTooltip" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
+  <name>Form Tooltip</name>
+  <description>Form Tooltip</description>
   <icon>
 	iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJ
 	bWFnZVJlYWR5ccllPAAAAdhJREFUeNqUUz1vE0EQfbN7PjvGxBIWpEmVghaJAqF0fFS0FAgJGjqa
@@ -31,17 +31,17 @@
         <enumerationValue key="before">Before</enumerationValue>
 	</enumerationValues>
     </property>
-	<property key="linktext" type="string">
-      <caption>Link text</caption>
-      <category>Appearance</category>
-      <description>Link text</description>
-    </property>
  	<property key="cssclass" type="string" required="false">
       <caption>Tooltip css class</caption>
       <category>Appearance</category>
       <description>Tooltip css class</description>
 	</property>
-	<property key="activator" type="enumeration" defaultValue="hover">
+ 	<property key="showIfEmpty" type="boolean" defaultValue="false">
+      <caption>Show if empty</caption>
+      <category>Appearance</category>
+      <description>Whether to show the popover if the contents of the target is empty.</description>
+	</property>
+	<property key="tooltipmode" type="enumeration" defaultValue="hover">
       <caption>Activated by</caption>
 	  <category>Appearance</category>
       <description>How the tooltip is activated and shown.</description>
@@ -50,5 +50,20 @@
 			<enumerationValue key="click">Click</enumerationValue>
 		</enumerationValues>
     </property>
+ 	<property key="targetnodeCSS" type="string" required="false">
+      <caption>Target Selector</caption>
+      <category>Appearance</category>
+      <description>Selector to the object in this same parent container on which you want the tooltip to operate (e.g.: ".tooltiptarget").</description>
+	</property>
+ 	<property key="targetnodesubCSS" type="string" required="false">
+      <caption>Target sub-object selector</caption>
+      <category>Appearance</category>
+      <description>Optional: selector to the DOM object inside the target object. Use this if you need to select (for example) just the data and not an adjoining label.</description>
+	</property>
+	<property key="targetToggleClass" type="string" required="false">
+      <caption>Toggle class</caption>
+      <category>Appearance</category>
+      <description>The CSS class to be toggled on the form target when the tooltip is visibile.</description>
+	</property> 
   </properties>
 </widget>
