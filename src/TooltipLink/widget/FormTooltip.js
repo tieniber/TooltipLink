@@ -62,12 +62,12 @@ define([
 		_hideListener		 : null,
 
 		_dataContainer       : {},
-		
+
 		_visible			 : false,
 
 		postCreate : function() {
 			logger.debug(this.id + ".postCreate");
-			
+
 			if (this.position === "") {
 				switch(this.tooltippos) {
                     case "below":
@@ -84,11 +84,11 @@ define([
                         break;
                 }
 			}
-			
+
 			if (this.targetnode === "") {
 					this.targetnode = $(this.domNode.parentNode).find(this.targetnodeCSS)[0];
 			}
-			
+
 			if (this.tooltipmode === "hover") {
 				this.connect(this.targetnode, "onmouseover", "_onShow");
 				this.connect(this.targetnode, "onmouseout", "_onHide");
@@ -111,14 +111,14 @@ define([
 
 		uninitialize : function() {
 			logger.debug(this.id + ".uninitialize");
-			
+
 			this._onHide();
 			//be sure to destroy the master tooltip
 			if (this._masterTT && this._masterTT.domNode) {
 				var toRemove = this._masterTT.domNode;
 				toRemove.parentNode.removeChild(toRemove);
 			}
-			
+
 			//if (typeof this._tooltipNode !== "undefined" && this._tooltipNode) {
 			//	widget.destroyChildren(this._tooltipNode);
 			//}
@@ -132,10 +132,10 @@ define([
 			if(!this._currentState) {
 				this._showTimer = setTimeout(lang.hitch(this, this._fetchForm) , this.showdelay);
 			}
-			
+
 			this._visible = true;
 		},
-		
+
 		_onSomeClick : function(e) {
 		 	if (!$(event.target).closest(this._tooltipNode).length) {
 				this.disconnect(this._hideListener);
@@ -151,37 +151,37 @@ define([
 			if(this._currentState) {
 				this._hideTimer = setTimeout(lang.hitch(this, this._hideTooltip) , this.hidedelay);
 			}
-			
+
 			this._visible = false;
 		},
-		
+
 		_onToggle : function(e) {
 			var target = event.target || event.srcElement
 			var shouldContinue = true;
-			
+
 			//Don't show the popover if the click target does not match the sub-selector
-            if(this.targetnodesubCSS && 
+            if(this.targetnodesubCSS &&
                this.targetnodesubCSS != "" &&
                $.inArray(target, $(this.targetnode).find(this.targetnodesubCSS)) === -1) {
                        shouldContinue = false;
              }
-						
+
 			//Don't show the popover if the cell contents are empty
 			if (!this.showIfEmpty) {
-				if(this.targetnodesubCSS && 
+				if(this.targetnodesubCSS &&
 				   this.targetnodesubCSS != "" &&
 				   !$(this.targetnode).find(this.targetnodesubCSS).text().trim()) {
 						shouldContinue = false;
 				} else if(!$(this.targetnode).text().trim()) {
-					shouldContinue = false;	
+					shouldContinue = false;
 				}
 			}
-				
+
 			if (shouldContinue) {
 				if (this._visible) {
 					this._onHide(e);
 				} else {
-					this._onShow(e);	
+					this._onShow(e);
 				}
 			}
 		},
@@ -206,13 +206,15 @@ define([
 						this._tooltipNode = node.firstChild;
 						this._topWidgets = registry.findWidgets(this._tooltipNode)[0];
 
-						this._topWidgets.set("disabled",true);
+						if(this._topWidgets) {
+							this._topWidgets.set("disabled",true);
+						}
 
 						//this.connect(this._tooltipNode, "onmouseover", lang.hitch(this, this._onShow));
 						//this.connect(this._tooltipNode, "onmouseout", lang.hitch(this, this._onHide));
-						
+
 						//this._hideListener = this.connect(document, "onclick", lang.hitch(this, this._onSomeClick));
-						
+
 						this._showTooltip();
 					} )
 				});
@@ -223,7 +225,7 @@ define([
 			logger.debug(this.id + ".showTooltip");
 			this._currentState = true;
 			this._hideListener = this.connect(document, "onclick", lang.hitch(this, this._onSomeClick));
-			
+
 			if(this._currentContext !== this._previousContext) {
 				this._onShowTooltip(null, this.targetnode, this.position, this.cssclass);
 				if(typeof this._topWidgets.applyContext !== "undefined") {
@@ -241,15 +243,15 @@ define([
 			}
 		},
 		_onShowTooltip : function(content, aroundNode, position, cssclass) {
-			if(!this._masterTT){ 
-				this._masterTT = new MasterTooltip(); 
-			}			
+			if(!this._masterTT){
+				this._masterTT = new MasterTooltip();
+			}
 			this._masterTT.show(content, aroundNode, position, null);
-			
+
 			if (cssclass) {
 				domClass.add(this._masterTT.domNode, cssclass);
 			}
-			
+
 			//add a class to the form target
 			if(this.targetToggleClass && this.targetToggleClass != "") {
 				$(this.targetnode).addClass(this.targetToggleClass);
@@ -265,7 +267,7 @@ define([
 			if(!this._masterTT){ this._masterTT = new MasterTooltip(); }
 			if(aroundNode === null){ aroundNode = this._masterTT.currentNode; }
 			this._masterTT.hide(aroundNode);
-			
+
 			//remove a class to the form target
 			if(this.targetToggleClass && this.targetToggleClass != "") {
 				$(this.targetnode).removeClass(this.targetToggleClass);
