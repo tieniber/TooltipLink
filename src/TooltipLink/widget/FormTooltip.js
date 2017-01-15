@@ -137,7 +137,7 @@ define([
 		},
 
 		_onSomeClick : function(e) {
-		 	if (!$(event.target).closest(this._tooltipNode).length) {
+		 	if (!$(e.target).closest(this._tooltipNode).length) {
 				this.disconnect(this._hideListener);
 				this._onHide(e);
 			}
@@ -156,7 +156,7 @@ define([
 		},
 
 		_onToggle : function(e) {
-			var target = event.target || event.srcElement
+			var target = e.target || e.srcElement
 			var shouldContinue = true;
 
 			//Don't show the popover if the click target does not match the sub-selector
