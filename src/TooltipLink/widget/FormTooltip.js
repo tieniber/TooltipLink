@@ -156,7 +156,7 @@ define([
 		},
 
 		_onToggle : function(e) {
-			var target = e.target || e.srcElement
+			var target = e.target || e.srcElement;
 			var shouldContinue = true;
 
 			//Don't show the popover if the click target does not match the sub-selector
