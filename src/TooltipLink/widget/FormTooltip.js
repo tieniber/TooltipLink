@@ -107,6 +107,7 @@ define([
 			if (typeof callback !== "undefined") {
 				callback();
 			}
+
 		},
 
 		uninitialize : function() {
@@ -196,7 +197,9 @@ define([
 				this._showTooltip();
 			} else {
 				node = mxui.dom.create("div");
+				this._previousContext = this._currentContext;
 				ioBind = mx.ui.openForm(this.tooltipform, {
+					context: this._currentContext,
 					location: "content",
 					domNode: node,
 					callback: lang.hitch(this, function(form) {
@@ -225,8 +228,16 @@ define([
 			logger.debug(this.id + ".showTooltip");
 			this._currentState = true;
 			this._hideListener = this.connect(document, "onclick", lang.hitch(this, this._onSomeClick));
+			this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
+
 
 			if(this._currentContext !== this._previousContext) {
+				if (this._topWidgets) {
+					this._topWidgets.applyContext(this._currentContext);
+					this._previousContext = this._currentContext;
+				}
+			}
+			/*if(this._currentContext !== this._previousContext) {
 				this._onShowTooltip(null, this.targetnode, this.position, this.cssclass);
 				if(typeof this._topWidgets.applyContext !== "undefined") {
 					this._topWidgets.applyContext(this._currentContext, lang.hitch(this, function() {
@@ -236,11 +247,10 @@ define([
 						}
 					}));
 				}
-				this.
-				_onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
+				this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
 			} else {
 				this._onShowTooltip(this._tooltipNode, this.targetnode, this.position, this.cssclass);
-			}
+			}*/
 		},
 		_onShowTooltip : function(content, aroundNode, position, cssclass) {
 			if(!this._masterTT){
